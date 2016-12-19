@@ -1918,26 +1918,28 @@ Rickshaw.Graph.Behavior.Series.Toggle = function(args) {
 
 	this.addAnchor = function(line) {
 
-		var anchor = document.createElement('a');
-		anchor.innerHTML = '&#10004;';
+		var anchor = document.createElement('input');
+		anchor.type = 'checkbox';
+		anchor.id = line.series.name;
+		anchor.checked = true;
 		anchor.classList.add('action');
 		line.element.insertBefore(anchor, line.element.firstChild);
 
 		anchor.onclick = function(e) {
 			if (line.series.disabled) {
 				line.series.enable();
-				line.element.classList.remove('disabled');
+				anchor.checked = true;
 			} else { 
 				if (this.graph.series.filter(function(s) { return !s.disabled }).length <= 1) return;
 				line.series.disable();
-				line.element.classList.add('disabled');
+				anchor.checked = false;
 			}
 
 			self.graph.update();
 
 		}.bind(this);
 		
-                var label = line.element.getElementsByTagName('span')[0];
+                var label = line.element.getElementsByTagName('label')[0];
                 label.onclick = function(e){
 
                         var disableAllOtherLines = line.series.disabled;
@@ -1960,14 +1962,14 @@ Rickshaw.Graph.Behavior.Series.Toggle = function(args) {
 
                                 // these must happen first or else we try ( and probably fail ) to make a no line graph
                                 line.series.enable();
-                                line.element.classList.remove('disabled');
+                                line.element.querySelector('input[type="checkbox"]').checked = true;
 
                                 self.legend.lines.forEach(function(l){
                                         if ( line.series === l.series ) {
                                                 // noop
                                         } else {
                                                 l.series.disable();
-                                                l.element.classList.add('disabled');
+				                                l.element.querySelector('input[type="checkbox"]').checked = false;
                                         }
                                 });
 
@@ -1975,7 +1977,7 @@ Rickshaw.Graph.Behavior.Series.Toggle = function(args) {
 
                                 self.legend.lines.forEach(function(l){
                                         l.series.enable();
-                                        l.element.classList.remove('disabled');
+		                                l.element.querySelector('input[type="checkbox"]').checked = true;
                                 });
 
                         }
@@ -2381,15 +2383,11 @@ Rickshaw.Graph.Legend = Rickshaw.Class.create( {
 		if (series.className) {
 			d3.select(line).classed(series.className, true);
 		}
-		var swatch = document.createElement('div');
-		swatch.className = 'swatch';
-		swatch.style.backgroundColor = series.color;
 
-		line.appendChild(swatch);
-
-		var label = document.createElement('span');
+		var label = document.createElement('label');
 		label.className = 'label';
 		label.innerHTML = series.name;
+		label.style.color = series.color;
 
 		line.appendChild(label);
 		this.list.appendChild(line);
