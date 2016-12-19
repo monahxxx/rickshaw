@@ -53,15 +53,11 @@ Rickshaw.Graph.Legend = Rickshaw.Class.create( {
 		if (series.className) {
 			d3.select(line).classed(series.className, true);
 		}
-		var swatch = document.createElement('div');
-		swatch.className = 'swatch';
-		swatch.style.backgroundColor = series.color;
 
-		line.appendChild(swatch);
-
-		var label = document.createElement('span');
+		var label = document.createElement('label');
 		label.className = 'label';
 		label.innerHTML = series.name;
+		label.style.color = series.color;
 
 		line.appendChild(label);
 		this.list.appendChild(line);
